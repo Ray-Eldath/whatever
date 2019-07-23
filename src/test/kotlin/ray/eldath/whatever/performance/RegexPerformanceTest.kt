@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance
 import java.security.InvalidParameterException
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -30,6 +31,12 @@ object RegexPerformanceTest {
     private val alphaNumeric = ('a'..'z') + ('A'..'Z') + ('0'..'9')
     private val allCosts = arrayListOf<Long>()
 
+    private fun evaluate(block: () -> Unit): Long {
+        val start = System.currentTimeMillis()
+        block()
+        return System.currentTimeMillis() - start
+    }
+
     private fun generateFakeData(datapool: List<String>, destination: MutableList<String>) {
         val actualLength = length - datapool[0].length
         if (actualLength < 0)
@@ -46,11 +53,9 @@ object RegexPerformanceTest {
 
     private fun doEachTest(compiledRegex: Pattern, costs: MutableList<Long>, data: List<String>, expected: Boolean) {
         for (t in data) {
-            val b1 = System.currentTimeMillis()
-            val r = compiledRegex.matcher(t).find()
-            val b2 = System.currentTimeMillis()
+            var r = !expected
+            val cost = evaluate { r = compiledRegex.matcher(t).find() }
             assertEquals(expected, r)
-            val cost = b2 - b1
             allCosts.add(cost)
             costs.add(cost)
             println("\t$r checkpoint B: ${cost}ms")
@@ -79,11 +84,12 @@ object RegexPerformanceTest {
     @RepeatedTest(1)
     fun test() {
         val costs = arrayListOf<Long>()
-        val a = System.currentTimeMillis()
-        val regex =
-            Pattern.compile("[\\w!#\$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#\$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?")
-        val a1 = System.currentTimeMillis()
-        println("checkpoint A: ${a1 - a}ms")
+        var regex by Delegates.notNull<Pattern>()
+        val cost = evaluate {
+            regex =
+                Pattern.compile("[\\w!#\$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#\$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?")
+        }
+        println("checkpoint A: ${cost}ms")
         doEachTest(regex, costs, trueData, true)
         doEachTest(regex, costs, falseData, false)
         println("partial cost average: ${costs.average().roundToInt()}ms\n")
