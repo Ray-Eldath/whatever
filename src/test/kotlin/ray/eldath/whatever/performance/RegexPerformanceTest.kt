@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 object RegexPerformanceTest {
-    private const val length = 10000
+    private const val length = 10000000
 
     private val trueDataPool = listOf(
         "something.tobetest@gmail.com",
@@ -28,7 +28,7 @@ object RegexPerformanceTest {
     private val trueData = arrayListOf<String>()
     private val falseData = arrayListOf<String>()
 
-    private val alphaNumeric = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private val noisePool = (' '..'?') + ('A'..'~')
     private val allCosts = arrayListOf<Long>()
 
     private fun evaluate(block: () -> Unit): Long {
@@ -42,8 +42,8 @@ object RegexPerformanceTest {
         if (actualLength < 0)
             throw InvalidParameterException("the target length can not hold even just the email")
 
-        val random = Random.nextInt(1, length - 1)
-        val data = (1..actualLength).map { alphaNumeric.random() }.joinToString("")
+        val random = Random.nextInt(0, length)
+        val data = (1..actualLength).map { noisePool.random() }.joinToString("")
         val dataLength = data.length
 
         datapool.mapTo(destination) {
@@ -81,7 +81,7 @@ object RegexPerformanceTest {
         println("\noverall cost average: ${allCosts.average().roundToInt()}ms")
     }
 
-    @RepeatedTest(1)
+    @RepeatedTest(15)
     fun test() {
         val costs = arrayListOf<Long>()
         var regex by Delegates.notNull<Pattern>()

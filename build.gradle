@@ -6,8 +6,8 @@ plugins {
 group 'ray.eldath.experiment'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 repositories {
     maven { url "https://maven.aliyun.com/repository/public" }
@@ -22,6 +22,8 @@ dependencies {
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.2.2'
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-script-runtime
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-script-runtime', version: '1.3.41'
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.41'
 }
 
 [compileKotlin, compileTestKotlin].forEach { it.kotlinOptions.jvmTarget = "1.8" }
