@@ -7,6 +7,8 @@ import java.lang.invoke.MethodType
 
 // 结论：方法句柄垃圾。有空再调这破代码......
 object ReflectAndMethodHandle {
+    class YetAnotherReflectAndMethodHandleTestClass
+
     class ReflectAndMethodHandleTestClass {
         fun eval(x: Int) = x * 2
 
@@ -27,6 +29,7 @@ object ReflectAndMethodHandle {
         assertEquals(2.5, evalFloat(instance, 5.0))
     }
 
+    // will failed due to java.lang.invoke.WrongMethodTypeException
     @Test
     fun testMethodHandle() {
         val instance = ReflectAndMethodHandleTestClass()
@@ -39,5 +42,12 @@ object ReflectAndMethodHandle {
             2.5,
             method.invoke(5.0)
         )
+    }
+
+    @Test
+    fun testClassLoader() {
+        val a = ReflectAndMethodHandleTestClass()
+        val b = YetAnotherReflectAndMethodHandleTestClass()
+        assertEquals(a.javaClass.classLoader.javaClass, b.javaClass.classLoader.javaClass)
     }
 }
