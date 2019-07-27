@@ -5,4 +5,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'whatever'
+rootProject.name = "whatever"
+include("jbm", "main")
