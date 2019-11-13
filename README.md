@@ -12,4 +12,4 @@
 
 ### 其他的一些东西
 
-- 我的Powershsell profile，包含一些很好用的自定义指令：[GitHub Gist - Ray-Eldath / Microsoft.PowerShell_profile.ps1](https://gist.github.com/Ray-Eldath/961824f60e4f7c55f9331f866fefafa8)]
+- 我的Powershsell profile，包含一些很好用的自定义指令：[GitHub Gist - Ray-Eldath / Microsoft.PowerShell_profile.ps1](https://gist.github.com/Ray-Eldath/961824f60e4f7c55f9331f866fefafa8)
