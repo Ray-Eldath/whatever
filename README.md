@@ -8,7 +8,7 @@
 
 很多代码放在 `test` 目录下。（就是我把 JUnit 当成了多个 psvm 的意思（逃））
 
-2018.7.27：~~这还是一个很好的 Gradle 5 multi-project 示范（雾~~
+2019.7.27：~~这还是一个很好的 Gradle 5 multi-project 示范（雾~~
 
 ### 其他的一些东西
 
