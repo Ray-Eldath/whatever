@@ -1,3 +1,12 @@
 group = "ray.eldath.whatever.jbm"
 
-dependencies {}
+dependencies {
+    // https://mvnrepository.com/artifact/org.javassist/javassist
+    compile group: 'org.javassist', name: 'javassist', version: '3.25.0-GA'
+}
+
+jar {
+    manifest {
+        attributes 'Premain-Class': 'ray.eldath.whatever.jbm.MainAgent'
+    }
+}

@@ -81,6 +81,7 @@ object RegexPerformanceTest {
         println("\noverall cost average: ${allCosts.average().roundToInt()}ms")
     }
 
+    // TODO: 太不严格。改为使用JMH。
     @RepeatedTest(15)
     fun test() {
         val costs = arrayListOf<Long>()

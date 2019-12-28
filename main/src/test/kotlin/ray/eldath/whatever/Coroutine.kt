@@ -1,9 +1,23 @@
 package ray.eldath.whatever
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 
 object Coroutine {
+    @RepeatedTest(3)
+    fun cancelTest() {
+        time {
+            val job = GlobalScope.launch {
+                while (isActive)
+                    Thread.sleep(1000000)
+            }
+            job.cancel()
+        }
+    }
+
     @Test
     fun basicTest() {
         println((arrayOf(1, 2, 3, "a", "b", 'c')).javaClass)
@@ -17,10 +31,8 @@ object Coroutine {
             yield(3)
             println("three")
 
-            yield("4")
+            yieldAll(7..10)
             println("done")
-
-            yieldAll('a'..'z')
         }
         println(sequence.toList())
 
@@ -39,5 +51,11 @@ object Coroutine {
         val result = sequence.take(progress++ * 15000).toList()
         val b = System.currentTimeMillis()
         println("checkpoint A: ${a1 - a}ms\tcheckpoint B: ${b - a1}ms")
+    }
+
+    private fun time(block: () -> Unit) {
+        val s = System.currentTimeMillis()
+        block()
+        println("time used: ${System.currentTimeMillis() - s}ms")
     }
 }

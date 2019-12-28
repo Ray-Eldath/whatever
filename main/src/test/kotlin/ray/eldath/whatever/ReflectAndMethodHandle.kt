@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
-// 结论：方法句柄垃圾。有空再调这破代码......
+// TODO: 结论：方法句柄垃圾。有空再调这破代码......
 object ReflectAndMethodHandle {
     class YetAnotherReflectAndMethodHandleTestClass
 
