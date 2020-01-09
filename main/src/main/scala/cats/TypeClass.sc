@@ -4,6 +4,10 @@
  * equivalent of design patterns in object-oriented programming. Type
  * class allows you to broaden the public interface of a class without
  * modifying it, or through inheritance.
+ *
+ * Hint: In IDEA, use *Command + Shift + P* to show implicit parameters popup,
+ * Ctrl + Alt + Shift + "+" to show inline hints and use, as you may guess,
+ * Ctrl + Alt + Shift + "-" to hide inline hints.
  */
 case class Person(name: String, age: Int)
 
