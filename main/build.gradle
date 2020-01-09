@@ -10,6 +10,7 @@ ext {
 
 dependencies {
     implementation 'org.scala-lang:scala-library:2.13.1'
+    implementation 'org.typelevel:cats-core_2.13:2.1.0'
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "5.5.1"
