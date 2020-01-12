@@ -6,8 +6,8 @@
  * modifying it, or through inheritance.
  *
  * Hint: In IDEA, use *Command + Shift + P* to show implicit parameters popup,
- * Ctrl + Alt + Shift + "+" to show inline hints and use, as you may guess,
- * Ctrl + Alt + Shift + "-" to hide inline hints.
+ * *Command + Alt + Shift + "+"* to show inline hints and use, as you may guess,
+ * *Command + Alt + Shift + "-"* to hide inline hints.
  */
 case class Person(name: String, age: Int)
 
