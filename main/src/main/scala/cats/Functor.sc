@@ -1,5 +1,7 @@
 /**
- * Functor: F[A] --- A => B ---> F[B]
+ * Functor
+ *
+ * map (covariance): F[A] --- A => B ---> F[B]
  */
 
 trait Functor[F[_]] {
@@ -9,6 +11,7 @@ trait Functor[F[_]] {
 }
 
 object Functor {
+
   implicit val listFunctor: Functor[List] = new Functor[List] {
 
     override def map[A, B](a: List[A])(f: A => B): List[B] = {
@@ -27,16 +30,6 @@ object Functor {
   def apply[F[_]](implicit f: Functor[F]) = f
 }
 
-object FunctorSyntax {
-
-  implicit class FunctorOps[A, F[_]](a: F[A]) {
-
-    def map1[B](f: A => B)(implicit functor: Functor[F]): F[B] =
-      functor.map(a)(f)
-  }
-
-}
-
 
 val l = List(1, 2, 3)
 
@@ -48,6 +41,15 @@ val ii = Functor[Option].lift(i)
 ii(Option(123))
 
 // use syntax:
+object FunctorSyntax {
+
+  implicit class FunctorOps[A, F[_]](a: F[A]) {
+
+    def map1[B](f: A => B)(implicit functor: Functor[F]): F[B] =
+      functor.map(a)(f)
+  }
+
+}
 
 import FunctorSyntax.FunctorOps
 

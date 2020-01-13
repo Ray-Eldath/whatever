@@ -38,4 +38,3 @@ implicit def boxPrintable[A](implicit f: Printable[A]): Printable[Box[A]] = f.co
 
 Box("123").format1()
 Box(true).format1()
-
