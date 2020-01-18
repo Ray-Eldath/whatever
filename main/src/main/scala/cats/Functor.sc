@@ -40,7 +40,7 @@ val i = (x: Int) => x * 2
 val ii = Functor[Option].lift(i)
 ii(Option(123))
 
-// use syntax:
+// use syntax
 object FunctorSyntax {
 
   implicit class FunctorOps[A, F[_]](a: F[A]) {
