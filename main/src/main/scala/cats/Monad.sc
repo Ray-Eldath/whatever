@@ -1,5 +1,3 @@
-import scala.collection.mutable.ListBuffer
-
 /**
  * Monad
  *
@@ -15,9 +13,14 @@ trait Monad[F[_]] {
     flatMap(value)((a: A) => pure(func(a)))
 }
 
+
+import cats.Id
+
 object Monad {
 
-  implicit def listMonad: Monad[List] = new Monad[List] {
+  import scala.collection.mutable.ListBuffer
+
+  implicit val listMonad: Monad[List] = new Monad[List] {
     override def pure[A](value: A) = List(value)
 
     override def flatMap[A, B](value: List[A])(func: A => List[B]) = {
@@ -40,6 +43,12 @@ object Monad {
       if (value.isDefined) func(value.get) else None
   }
 
+  implicit val idMonad: Monad[Id] = new Monad[Id] {
+    override def pure[A](value: A): Id[A] = value
+
+    override def flatMap[A, B](value: Id[A])(func: A => Id[B]): Id[B] = func(value)
+  }
+
   def apply[F[_]](implicit monad: Monad[F]) = monad
 }
 
@@ -54,18 +63,47 @@ Monad[Option].flatMap(s)(value => Some(value + " eldath"))
 // define syntax
 object MonadSyntax {
 
-  implicit class MonadOps[A](value: A) {
+  implicit class MonadPureOp[A](value: A) {
 
     def pure[F[_]](implicit monad: Monad[F]) = monad.pure(value)
+  }
 
-    def flatMap[B, F[_]](func: A => F[B])(implicit monad: Monad[F]) = monad.flatMap(value.pure)(func)
+  implicit class MonadOps[F[_], A](value: F[A])(implicit monad: Monad[F]) {
 
-    def map[B, F[_]](func: A => B)(implicit monad: Monad[F]) = monad.map(value.pure)(func)
+    def flatMap1[B](func: A => F[B]) = monad.flatMap(value)(func)
+
+    def map1[B](func: A => B) = monad.map(value)(func)
+
+    // for `for comprehension`:
+    def flatMap[B](func: A => F[B]) = flatMap1(func)
+
+    def map[B](func: A => B) = map1(func)
   }
 
 }
 
-import MonadSyntax.MonadOps
+import MonadSyntax._
 
 1.pure[Option]
 "ray".pure[List]
+3.pure[Id]
+"eldath".pure[Id]
+
+List("ray ", "beam ").flatMap1(value => List(value + "eldath"))
+Option(123).flatMap1(value => Some(value * 2))
+
+import MonadSyntax.MonadOps
+
+def squareAndSum[F[_] : Monad](x: F[Int], y: F[Int]): F[Int] =
+  x.flatMap1(a => y.map1(b => a * a + b * b))
+
+squareAndSum(Option(3), Option(4))
+
+// or use for comprehension:
+def squareAndSumFor[F[_] : Monad](x: F[Int], y: F[Int]): F[Int] =
+  for {
+    a <- x
+    b <- y
+  } yield a * a + b * b
+
+squareAndSum(Option(4), Option(3))
