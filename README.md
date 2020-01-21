@@ -12,6 +12,8 @@
 
 2019.7.27：~~这还是一个很好的 Gradle 5 multi-project 示范（雾~~
 
+2020.1.21: 大型重构。所有benchmark放`perf`这个独立项目里边，每个benchmark同样是这个独立项目里边的独立子项目，并且通过`shadow`达成`fatJar`的打包。在该结构下新增`NewInstPerfTest`（可能会有一篇相关的分析文章..... 然而我又懒又垃圾......（（（（大哭），未来可能还会有 `RegexPerfTest`。
+
 ### 其他的一些东西
 
-- 我的Powershsell profile，包含一些很好用的自定义指令：[GitHub Gist - Ray-Eldath / Microsoft.PowerShell_profile.ps1](https://gist.github.com/Ray-Eldath/961824f60e4f7c55f9331f866fefafa8)
+- 我的PowerShell profile，包含一些很好用的自定义指令：[GitHub Gist - Ray-Eldath / Microsoft.PowerShell_profile.ps1](https://gist.github.com/Ray-Eldath/961824f60e4f7c55f9331f866fefafa8)

@@ -1,3 +1,5 @@
+package ray.eldath.whatever.test;
+
 import java.lang.ref.Reference;
 
 public class TestTest {

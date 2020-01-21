@@ -1,0 +1,21 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.2.0' apply false
+}
+
+ext {
+    jmhVersion = '1.22'
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    group = "ray.eldath.whatever.performance"
+    version = "1.0"
+
+    dependencies {
+        annotationProcessor "org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion"
+        implementation "org.openjdk.jmh:jmh-core:$jmhVersion"
+    }
+}

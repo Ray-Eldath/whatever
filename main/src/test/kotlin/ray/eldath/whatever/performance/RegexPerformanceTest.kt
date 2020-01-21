@@ -11,6 +11,7 @@ import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
+@Deprecated("a too crude benchmark. will refactor to JMH in the future...")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 object RegexPerformanceTest {
     private const val length = 10000000
@@ -81,7 +82,6 @@ object RegexPerformanceTest {
         println("\noverall cost average: ${allCosts.average().roundToInt()}ms")
     }
 
-    // TODO: 太不严格。改为使用JMH。
     @RepeatedTest(15)
     fun test() {
         val costs = arrayListOf<Long>()

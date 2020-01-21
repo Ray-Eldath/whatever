@@ -6,4 +6,4 @@ pluginManagement {
 }
 
 rootProject.name = "whatever"
-include("jbm", "main")
+include("main", "perf", "perf:perf.newinst")
