@@ -22,12 +22,12 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @Fork(1)
 @Threads(1)
-@Measurement(iterations = 2, time = 2)
-@Warmup(iterations = 5, time = 2)
+@Measurement(iterations = 3, time = 3)
+@Warmup(iterations = 4, time = 2)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Benchmark)
 public class NewInstPerfTest {
-    @Param({"1", "5", "10", "50", "100"})
+    @Param({"1", "5", "10", "50", "100", "500", "1000"})
     private static int SIZE;
 
     private static final List<String> strings = new ArrayList<>();
@@ -47,19 +47,56 @@ public class NewInstPerfTest {
     }
 
     @Benchmark
-    public void newInst(Blackhole blackhole) {
+    public void newInstSingle(Blackhole blackhole) {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
-            var integer = integers.get(i);
 
-            var instance = new Wrapper(string, integer); // instance creation happens here!
+            var instance = new SingleWrapper(string);
 
             blackhole.consume(instance);
+            blackhole.consume(string);
         }
     }
 
     @Benchmark
-    public void baseline(Blackhole blackhole) {
+    public void baselineSingle(Blackhole blackhole) {
+        for (var i = 0; i < SIZE; i++) {
+            var string = strings.get(i);
+
+            blackhole.consume(string);
+        }
+    }
+
+    @Benchmark
+    public void newObj(Blackhole blackhole) {
+        for (var i = 0; i < SIZE; i++) {
+            var string = strings.get(i);
+            var integer = integers.get(i);
+
+            var instance = new Object(); // creation
+
+            blackhole.consume(instance);
+            blackhole.consume(string);
+            blackhole.consume(integer);
+        }
+    }
+
+    @Benchmark
+    public void newInstPair(Blackhole blackhole) {
+        for (var i = 0; i < SIZE; i++) {
+            var string = strings.get(i);
+            var integer = integers.get(i);
+
+            var instance = new PairWrapper(string, integer); // creation
+
+            blackhole.consume(instance);
+            blackhole.consume(string);
+            blackhole.consume(integer);
+        }
+    }
+
+    @Benchmark
+    public void baselinePair(Blackhole blackhole) {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
             var integer = integers.get(i);
@@ -70,8 +107,9 @@ public class NewInstPerfTest {
     }
 
     public static void main(String[] args) throws RunnerException, IOException {
+        System.setProperty("file.encoding", "UTF-8");
         System.out.println("Now testing " + NewInstPerfTest.class.getName() + "...");
-        System.out.println("This may takes 4 or 5 minutes to complete.");
+        System.out.println("This may takes 10 or more minutes to complete.");
 
         var now = String.valueOf(System.currentTimeMillis());
         var nowLength = now.length();
