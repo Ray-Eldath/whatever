@@ -1,7 +1,7 @@
 package ray.eldath.whatever.performance.newinst;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.profile.LinuxPerfAsmProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -21,21 +21,22 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @Fork(1)
-@Threads(1)
-@Measurement(iterations = 3, time = 3)
+@Measurement(iterations = 2, time = 2)
 @Warmup(iterations = 4, time = 2)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Benchmark)
 public class NewInstPerfTest {
-    @Param({"1", "5", "10", "50", "100", "500", "1000"})
-    private static int SIZE;
+    @Param({"1", "10", "50", "100", "1000", "10000"})
+    private int SIZE;
+    private SingleWrapper single;
 
-    private static final List<String> strings = new ArrayList<>();
-    private static final List<Integer> integers = new ArrayList<>();
+    private List<String> strings = new ArrayList<>();
+    private List<Integer> integers = new ArrayList<>();
 
     @Setup
     public void setup() {
         var random = new Random();
+        single = new SingleWrapper("");
 
         for (var i = 0; i < SIZE; i++) {
             var array = new byte[8];
@@ -47,63 +48,70 @@ public class NewInstPerfTest {
     }
 
     @Benchmark
-    public void newInstSingle(Blackhole blackhole) {
+    public void newInstSingle() {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
+            var integer = integers.get(i);
 
             var instance = new SingleWrapper(string);
 
-            blackhole.consume(instance);
-            blackhole.consume(string);
+            sink(instance);
+            sink(string);
+            sink(integer);
         }
     }
 
     @Benchmark
-    public void baselineSingle(Blackhole blackhole) {
-        for (var i = 0; i < SIZE; i++) {
-            var string = strings.get(i);
-
-            blackhole.consume(string);
-        }
-    }
-
-    @Benchmark
-    public void newObj(Blackhole blackhole) {
+    public void newInstPair() {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
             var integer = integers.get(i);
 
-            var instance = new Object(); // creation
+            var instance = new PairWrapper(string, integer);
 
-            blackhole.consume(instance);
-            blackhole.consume(string);
-            blackhole.consume(integer);
+            sink(instance);
+            sink(string);
+            sink(integer);
         }
     }
 
     @Benchmark
-    public void newInstPair(Blackhole blackhole) {
+    public void baseline() {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
             var integer = integers.get(i);
 
-            var instance = new PairWrapper(string, integer); // creation
-
-            blackhole.consume(instance);
-            blackhole.consume(string);
-            blackhole.consume(integer);
+            sink(single);
+            sink(string);
+            sink(integer);
         }
     }
 
     @Benchmark
-    public void baselinePair(Blackhole blackhole) {
+    public void baseline_() {
         for (var i = 0; i < SIZE; i++) {
             var string = strings.get(i);
             var integer = integers.get(i);
 
-            blackhole.consume(string);
-            blackhole.consume(integer);
+            sink(string);
+            sink(integer);
         }
+    }
+
+    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+    public static void sink(String v) {
+    }
+
+    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+    public static void sink(int v) {
+    }
+
+    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+    public static void sink(PairWrapper v) {
+    }
+
+    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+    public static void sink(SingleWrapper v) {
     }
 
     public static void main(String[] args) throws RunnerException, IOException {
@@ -121,8 +129,13 @@ public class NewInstPerfTest {
                 .include(NewInstPerfTest.class.getSimpleName())
                 .resultFormat(ResultFormatType.CSV)
                 .result(result.toString())
-                .output(output.toString()).build();
-        new Runner(options).run();
+                .output(output.toString());
+
+        if (args.length >= 1 && "prof".equals(args[0])) {
+            options.addProfiler(LinuxPerfAsmProfiler.class);
+        }
+
+        new Runner(options.build()).run();
 
         System.out.println("Benchmark result: " + output);
         System.out.println("\t\tas well as " + result);

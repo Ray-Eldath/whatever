@@ -1,1 +1,3 @@
+version = "3.0"
+
 mainClassName = 'ray.eldath.whatever.performance.newinst.NewInstPerfTest'
