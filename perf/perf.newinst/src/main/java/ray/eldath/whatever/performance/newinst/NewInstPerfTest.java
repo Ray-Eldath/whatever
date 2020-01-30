@@ -1,7 +1,7 @@
 package ray.eldath.whatever.performance.newinst;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.profile.LinuxPerfAsmProfiler;
+import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @BenchmarkMode(Mode.AverageTime)
-@Fork(1)
+@Fork(2)
 @Measurement(iterations = 2, time = 2)
 @Warmup(iterations = 4, time = 2)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -132,7 +132,7 @@ public class NewInstPerfTest {
                 .output(output.toString());
 
         if (args.length >= 1 && "prof".equals(args[0])) {
-            options.addProfiler(LinuxPerfAsmProfiler.class);
+            options.addProfiler(GCProfiler.class);
         }
 
         new Runner(options.build()).run();
