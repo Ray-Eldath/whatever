@@ -168,5 +168,5 @@ SECTION stack align=16 vstart=0
     resb 256
 stack_end:
 
-SECTION trail
+SECTION tail
 program_end:
