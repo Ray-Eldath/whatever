@@ -1,0 +1,59 @@
+    .data
+prompt:
+    .asciiz "the n-th of fib: "
+result:
+    .asciiz "\nresult: "
+    .text
+    .globl main
+
+main:
+    li $v0, 4
+    la $a0, prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $s0, $v0
+    addi $a0, $zero, 1
+    addi $a1, $zero, 1
+    move $a2, $s0
+    jal fib
+
+    move $s1, $v0
+
+    li $v0, 4
+    la $a0, result
+    syscall
+    li $v0, 1
+    move $a0, $s1
+    syscall
+
+    li $v0, 10
+    syscall
+    
+fib:
+    addi $sp, $sp, -16
+    sw $a0, 0($sp)
+    sw $a1, 4($sp)
+    sw $a2, 8($sp)
+    sw $ra, 12($sp)
+    sgt $t0, $a2, $zero
+    beq $t0, $zero, base
+    add $t1, $a0, $a1
+    move $a0, $a1
+    move $a1, $t1
+    addi $a2, $a2, -1
+    jal fib
+    lw $a0, 0($sp)
+    lw $a1, 4($sp)
+    lw $a2, 8($sp)
+    lw $ra, 12($sp)
+    addi $sp, $sp, 16
+    jr $ra
+
+base:
+    add $v0, $a0, $a1
+    lw $a0, 0($sp)
+    lw $a1, 4($sp)
+    lw $ra, 12($sp)
+    addi $sp, $sp, 16
+    jr $ra
